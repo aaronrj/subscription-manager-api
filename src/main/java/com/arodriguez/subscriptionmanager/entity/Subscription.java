@@ -1,5 +1,6 @@
 package com.arodriguez.subscriptionmanager.entity;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 @Entity
@@ -17,7 +18,10 @@ public class Subscription {
 
     private String name;
 
+    @NotNull(message = "Monthly cost is required")
+    @Positive(message = "Monthly cost must be greater than 0")
     private Double monthlyCost;
+
 
     private String category;
 

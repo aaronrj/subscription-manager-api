@@ -1,10 +1,14 @@
 package com.arodriguez.subscriptionmanager.controller;
 
+import com.arodriguez.subscriptionmanager.dto.SubscriptionRequest;
 import com.arodriguez.subscriptionmanager.entity.Subscription;
 import com.arodriguez.subscriptionmanager.service.SubscriptionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -15,44 +19,41 @@ public class SubscriptionController {
     private final SubscriptionService service;
 
     @PostMapping
-    public Subscription create(@RequestBody Subscription subscription){
-        return service.save(subscription);
+    public ResponseEntity<Subscription> create(@Valid @RequestBody SubscriptionRequest request) {
+        Subscription created = service.create(request);
+        return ResponseEntity
+                .created(URI.create("/subscriptions/" + created.getId()))
+                .body(created);
     }
 
     @GetMapping
-    public List<Subscription> getAll(){
-        return service.findAll();
+    public ResponseEntity<List<Subscription>> getAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public Subscription getById(@PathVariable Long id){
-        return service.findById(id);
+    public ResponseEntity<Subscription> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public Subscription update(@PathVariable Long id, @RequestBody Subscription update){
-        return service.update(id, update);
+    public ResponseEntity<Subscription> update(@PathVariable Long id, @Valid @RequestBody SubscriptionRequest request) {
+        return ResponseEntity.ok(service.update(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public void delete(@PathVariable Long id){
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/stats/total-monthly")
-    public Double getTotalMonthlyCost() {
-        return service.findAll()
-                .stream()
-                .mapToDouble(s -> s.getMonthlyCost() == null ? 0.0 : s.getMonthlyCost())
-                .sum();
+    public ResponseEntity<Double> getTotalMonthlyCost() {
+        return ResponseEntity.ok(service.getTotalMonthlyCost());
     }
 
     @GetMapping("/stats/active-monthly")
-    public Double getActiveMonthlyCost() {
-        return service.findAll()
-                .stream()
-                .filter(s -> Boolean.TRUE.equals(s.getActive()))
-                .mapToDouble(s -> s.getMonthlyCost() == null ? 0.0 : s.getMonthlyCost())
-                .sum();
+    public ResponseEntity<Double> getActiveMonthlyCost() {
+        return ResponseEntity.ok(service.getActiveMonthlyCost());
     }
 }

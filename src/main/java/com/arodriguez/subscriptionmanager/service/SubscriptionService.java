@@ -1,5 +1,6 @@
 package com.arodriguez.subscriptionmanager.service;
 
+import com.arodriguez.subscriptionmanager.dto.SubscriptionRequest;
 import com.arodriguez.subscriptionmanager.entity.Subscription;
 import com.arodriguez.subscriptionmanager.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,30 +23,45 @@ public class SubscriptionService {
                 .orElseThrow(() -> new RuntimeException("Subscription not found"));
     }
 
-    public Subscription save(Subscription subscription) {
+    // ✅ NUEVO: create() para tu Controller nuevo
+    public Subscription create(SubscriptionRequest request) {
+        Subscription subscription = new Subscription();
+        subscription.setName(request.getName());
+        subscription.setCategory(request.getCategory());
+        subscription.setMonthlyCost(request.getMonthlyCost());
 
-        if (subscription.getActive() == null) {
-            subscription.setActive(true);
-        }
+        // default true si no viene
+        subscription.setActive(request.getActive() == null ? true : request.getActive());
 
         return repository.save(subscription);
     }
 
-    public Subscription update(Long id, Subscription update) {
-
+    // ✅ NUEVO: update() con DTO para tu Controller nuevo
+    public Subscription update(Long id, SubscriptionRequest request) {
         Subscription existing = findById(id);
 
-        existing.setName(update.getName());
-        existing.setCategory(update.getCategory());
-        existing.setMonthlyCost(update.getMonthlyCost());
-        existing.setActive(update.getActive());
+        existing.setName(request.getName());
+        existing.setCategory(request.getCategory());
+        existing.setMonthlyCost(request.getMonthlyCost());
+
+        // Si quieres que active sea opcional en update:
+        if (request.getActive() != null) {
+            existing.setActive(request.getActive());
+        }
 
         return repository.save(existing);
     }
 
     public void deleteById(Long id) {
-
         Subscription existing = findById(id);
         repository.delete(existing);
+    }
+
+    public Double getTotalMonthlyCost() {
+        return repository.sumTotalMonthlyCost();
+    }
+
+    public Double getActiveMonthlyCost() {
+        return repository.sumActiveMonthlyCost();
     }
 }
