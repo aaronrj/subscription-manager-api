@@ -1,11 +1,14 @@
 package com.arodriguez.subscriptionmanager.service;
 
 import com.arodriguez.subscriptionmanager.dto.SubscriptionRequest;
+import com.arodriguez.subscriptionmanager.dto.SubscriptionResponse;
 import com.arodriguez.subscriptionmanager.entity.Subscription;
+import com.arodriguez.subscriptionmanager.exception.SubscriptionNotFoundException;
 import com.arodriguez.subscriptionmanager.repository.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -14,54 +17,65 @@ public class SubscriptionService {
 
     private final SubscriptionRepository repository;
 
-    public List<Subscription> findAll() {
-        return repository.findAll();
+    public List<SubscriptionResponse> findAll() {
+        return repository.findAll().stream().map(this::toResponse).toList();
     }
 
-    public Subscription findById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Subscription not found"));
+    public SubscriptionResponse findById(Long id) {
+        return toResponse(getEntityById(id));
     }
 
-    // ✅ NUEVO: create() para tu Controller nuevo
-    public Subscription create(SubscriptionRequest request) {
-        Subscription subscription = new Subscription();
-        subscription.setName(request.getName());
-        subscription.setCategory(request.getCategory());
-        subscription.setMonthlyCost(request.getMonthlyCost());
+    public SubscriptionResponse create(SubscriptionRequest request) {
+        Subscription s = new Subscription();
+        s.setName(request.getName());
+        s.setCategory(request.getCategory());
+        s.setMonthlyCost(request.getMonthlyCost());
+        s.setActive(request.getActive() == null ? true : request.getActive());
 
-        // default true si no viene
-        subscription.setActive(request.getActive() == null ? true : request.getActive());
-
-        return repository.save(subscription);
+        return toResponse(repository.save(s));
     }
 
-    // ✅ NUEVO: update() con DTO para tu Controller nuevo
-    public Subscription update(Long id, SubscriptionRequest request) {
-        Subscription existing = findById(id);
+    public SubscriptionResponse update(Long id, SubscriptionRequest request) {
+        Subscription existing = getEntityById(id);
 
         existing.setName(request.getName());
         existing.setCategory(request.getCategory());
         existing.setMonthlyCost(request.getMonthlyCost());
 
-        // Si quieres que active sea opcional en update:
+        // active opcional (si viene null, no lo tocamos)
         if (request.getActive() != null) {
             existing.setActive(request.getActive());
         }
 
-        return repository.save(existing);
+        return toResponse(repository.save(existing));
     }
 
     public void deleteById(Long id) {
-        Subscription existing = findById(id);
+        Subscription existing = getEntityById(id);
         repository.delete(existing);
     }
 
-    public Double getTotalMonthlyCost() {
+    public BigDecimal getTotalMonthlyCost() {
         return repository.sumTotalMonthlyCost();
     }
 
-    public Double getActiveMonthlyCost() {
+    public BigDecimal getActiveMonthlyCost() {
         return repository.sumActiveMonthlyCost();
+    }
+
+    // ----------------- helpers -----------------
+    private Subscription getEntityById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new SubscriptionNotFoundException(id));
+    }
+
+    private SubscriptionResponse toResponse(Subscription s) {
+        return new SubscriptionResponse(
+                s.getId(),
+                s.getName(),
+                s.getMonthlyCost(),
+                s.getCategory(),
+                s.getActive()
+        );
     }
 }

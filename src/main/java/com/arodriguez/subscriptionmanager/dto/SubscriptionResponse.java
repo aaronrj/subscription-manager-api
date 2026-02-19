@@ -1,26 +1,27 @@
 package com.arodriguez.subscriptionmanager.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import java.math.BigDecimal;
 
-public class SubscriptionRequest {
-
-    @NotBlank(message = "Name is required")
+public class SubscriptionResponse {
+    private Long id;
     private String name;
-
-    @NotNull(message = "Monthly cost is required")
-    @Positive(message = "Monthly cost must be greater than 0")
     private BigDecimal monthlyCost;
-
-    @NotBlank(message = "Category is required")
     private String category;
-
-    // En create puede ser null => default true en service
     private Boolean active;
 
-    // Getters & Setters
+    public SubscriptionResponse() {}
+
+    public SubscriptionResponse(Long id, String name, BigDecimal monthlyCost, String category, Boolean active) {
+        this.id = id;
+        this.name = name;
+        this.monthlyCost = monthlyCost;
+        this.category = category;
+        this.active = active;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 

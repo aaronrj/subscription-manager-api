@@ -1,13 +1,14 @@
 package com.arodriguez.subscriptionmanager.controller;
 
 import com.arodriguez.subscriptionmanager.dto.SubscriptionRequest;
-import com.arodriguez.subscriptionmanager.entity.Subscription;
+import com.arodriguez.subscriptionmanager.dto.SubscriptionResponse;
 import com.arodriguez.subscriptionmanager.service.SubscriptionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 
@@ -19,25 +20,28 @@ public class SubscriptionController {
     private final SubscriptionService service;
 
     @PostMapping
-    public ResponseEntity<Subscription> create(@Valid @RequestBody SubscriptionRequest request) {
-        Subscription created = service.create(request);
+    public ResponseEntity<SubscriptionResponse> create(@Valid @RequestBody SubscriptionRequest request) {
+        SubscriptionResponse created = service.create(request);
         return ResponseEntity
                 .created(URI.create("/subscriptions/" + created.getId()))
                 .body(created);
     }
 
     @GetMapping
-    public ResponseEntity<List<Subscription>> getAll() {
+    public ResponseEntity<List<SubscriptionResponse>> getAll() {
         return ResponseEntity.ok(service.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Subscription> getById(@PathVariable Long id) {
+    public ResponseEntity<SubscriptionResponse> getById(@PathVariable Long id) {
         return ResponseEntity.ok(service.findById(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Subscription> update(@PathVariable Long id, @Valid @RequestBody SubscriptionRequest request) {
+    public ResponseEntity<SubscriptionResponse> update(
+            @PathVariable Long id,
+            @Valid @RequestBody SubscriptionRequest request
+    ) {
         return ResponseEntity.ok(service.update(id, request));
     }
 
@@ -48,12 +52,12 @@ public class SubscriptionController {
     }
 
     @GetMapping("/stats/total-monthly")
-    public ResponseEntity<Double> getTotalMonthlyCost() {
+    public ResponseEntity<BigDecimal> getTotalMonthlyCost() {
         return ResponseEntity.ok(service.getTotalMonthlyCost());
     }
 
     @GetMapping("/stats/active-monthly")
-    public ResponseEntity<Double> getActiveMonthlyCost() {
+    public ResponseEntity<BigDecimal> getActiveMonthlyCost() {
         return ResponseEntity.ok(service.getActiveMonthlyCost());
     }
 }
