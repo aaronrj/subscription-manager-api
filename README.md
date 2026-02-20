@@ -1,107 +1,118 @@
-# Subscription Manager API
-
-A RESTful API built with Spring Boot to manage recurring subscriptions.
-The application allows users to create, update, delete and analyze monthly expenses.
-
+# SubTrackAPI 
 ---
 
-## 🚀 Tech Stack
+Proof of Concept (PoC) – Subscription Manager Backend API 
+Febrero 2026 
+SubTrackAPI es una API REST desarrollada con Spring Boot para la gestión de suscripciones digitales. Permite crear, consultar, actualizar y eliminar suscripciones, además de calcular el gasto mensual total y el gasto de suscripciones activas. 
+Este proyecto representa una primera versión funcional (MVP técnico) como base para futuras mejoras y evolución hacia un producto más completo. 
+
+--- 
+
+## 🚀 Tecnologías Utilizadas 
 
 - Java 17
 - Spring Boot 3
+- Spring Web
 - Spring Data JPA
-- PostgreSQL
-- Docker
-- Maven
-- Lombok
+- PostgreSQL 15
+- Docker & Docker Compose
+- Swagger (OpenAPI)
 
 ---
 
-## 🏗 Architecture
+## 🏗 Arquitectura 
 
-The project follows a layered architecture:
+El proyecto sigue una arquitectura en capas (Layered Architecture): 
 
-Controller → Service → Repository → Database
+Controller → Service → Repository → PostgreSQL 
 
-- **Controller** handles HTTP requests.
-- **Service** contains business logic.
-- **Repository** communicates with the database.
-- **PostgreSQL** stores subscription data.
+- **Controller**: Gestiona las peticiones HTTP
+- **Service**: Contiene la lógica de negocio
+- **Repository**: Acceso a datos mediante JPA
+- **PostgreSQL**: Base de datos relacional ejecutada en Docker
 
----
+Esta estructura permite mantener el código limpio, escalable y mantenible.
 
-## 🐳 Running with Docker
+--- 
 
-### 1️⃣ Start PostgreSQL
+## 🐳 Cómo Ejecutar el Proyecto (Docker) 
+
+Desde la raíz del proyecto:
 
 ```bash
-docker compose up -d
+docker compose up --build -d
 ```
 
-### 2️⃣ Run the application
-
-Run `SubscriptionManagerApiApplication` from IntelliJ  
-or use:
+Verificar que los contenedores estén activos:
 
 ```bash
-mvn spring-boot:run
+docker compose ps
 ```
 
-The application runs on:
+Para detener y limpiar contenedores y volúmenes:
 
+```bash
+docker compose down -v
 ```
-http://localhost:8080
+
+--- 
+
+## 🌐 Acceso a la Aplicación Aplicación: 
+
+API Base URL: [Open Application](http://localhost:8080) 
+Swagger UI (documentación interactiva): [Swagger UI](http://localhost:8080/swagger-ui/index.html) 
+OpenAPI JSON: [OpenAPI JSON](http://localhost:8080/v3/api-docs) 
+
+--- 
+
+## 📌 Endpoints Principales
+
+| Método | Endpoint | Descripción |
+|--------|----------|------------|
+| GET | /subscriptions | Listar todas las suscripciones |
+| POST | /subscriptions | Crear nueva suscripción |
+| GET | /subscriptions/{id} | Obtener suscripción por ID |
+| PUT | /subscriptions/{id} | Actualizar suscripción |
+| DELETE | /subscriptions/{id} | Eliminar suscripción |
+| GET | /subscriptions/stats/total-monthly | Gasto mensual total |
+| GET | /subscriptions/stats/active-monthly | Gasto mensual activo |
+
+```powershell
+Invoke-RestMethod -Method Post `
+  -Uri "http://localhost:8080/subscriptions" `
+  -ContentType "application/json" `
+  -Body '{"name":"Netflix","monthlyCost":12.99,"category":"Streaming","active":true}'
+```
+
+Obtener todas las suscripciones: 
+
+```powershell
+Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions" 
+```
+
+Obtener gasto mensual total:
+
+```powershell
+Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions/stats/total-monthly" ---  
 ```
 
 ---
 
-## 📌 API Endpoints
+## 🔮 Próximas Mejoras
 
-### CRUD
-
-- `GET /subscriptions` → Get all subscriptions
-- `GET /subscriptions/{id}` → Get subscription by ID
-- `POST /subscriptions` → Create subscription
-- `PUT /subscriptions/{id}` → Update subscription
-- `DELETE /subscriptions/{id}` → Delete subscription
-
-### Statistics
-
-- `GET /subscriptions/stats/total-monthly`
-- `GET /subscriptions/stats/active-monthly`
+- [ ] Autenticación con JWT
+- [ ] Sistema de usuarios
+- [ ] Paginación y filtros avanzados
+- [ ] Validaciones extendidas
+- [ ] Tests automatizados (Unit & Integration)
+- [ ] CI/CD
+- [ ] Despliegue en la nube (AWS / Render / Railway)
 
 ---
 
-## 📥 Example Request
 
-### Create Subscription
+## 👨‍💻 Autor 
+Aarón Rodríguez Jiménez 
+Febrero 2026
 
-```json
-POST /subscriptions
-
-{
-  "name": "Netflix",
-  "monthlyCost": 12.99,
-  "category": "Streaming",
-  "active": true
-}
-```
-
----
-
-## 📊 Features Implemented
-
-- Full CRUD operations
-- Monthly cost statistics
-- Layered architecture (Controller-Service-Repository)
-- Dockerized PostgreSQL
-- Automatic table creation with Hibernate
-
----
-
-## 👨‍💻 Author
-Aaron Rodríguez Jiménez  
-
-## About This Project
-This project is part of my backend portfolio and focuses on building structured REST APIs using Spring Boot and PostgreSQL.
-
+## Version: 0.1.0 (MVP)
