@@ -59,9 +59,9 @@ docker compose down -v
 
 ## 🌐 Acceso a la Aplicación Aplicación: 
 
-API Base URL: [Open Application](http://localhost:8080) 
-Swagger UI (documentación interactiva): [Swagger UI](http://localhost:8080/swagger-ui/index.html) 
-OpenAPI JSON: [OpenAPI JSON](http://localhost:8080/v3/api-docs) 
+- API Base URL: [Open Application](http://localhost:8080) 
+- Swagger UI (documentación interactiva): [Swagger UI](http://localhost:8080/swagger-ui/index.html) 
+- OpenAPI JSON: [OpenAPI JSON](http://localhost:8080/v3/api-docs) 
 
 --- 
 
@@ -93,7 +93,7 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions"
 Obtener gasto mensual total:
 
 ```powershell
-Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions/stats/total-monthly" ---  
+Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions/stats/total-monthly" 
 ```
 
 ---
@@ -112,7 +112,6 @@ Invoke-RestMethod -Method Get -Uri "http://localhost:8080/subscriptions/stats/to
 
 
 ## 👨‍💻 Autor 
-Aarón Rodríguez Jiménez 
-Febrero 2026
+Aarón Rodríguez Jiménez (Febrero 2026)
 
 ## Version: 0.1.0 (MVP)
